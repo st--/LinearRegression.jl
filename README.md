@@ -7,7 +7,8 @@
 
 Because I keep finding myself thinking, "I need some simple linear regression
 here...", and missing the level of abstraction halfway in between `X \ y` and
-[GLM.jl](https://github.com/JuliaStats/GLM.jl).
+[GLM.jl](https://github.com/JuliaStats/GLM.jl), without lots of additional
+dependencies.
 I keep running into [this Discourse
 thread](https://discourse.julialang.org/t/efficient-way-of-doing-linear-regression/31232)
 and wishing I could just be `using LinearRegression`.
@@ -26,7 +27,9 @@ Allowing you to extract coefficients and predict.
 
 Handling of DataFrames (use [GLM.jl](https://github.com/JuliaStats/GLM.jl) instead).
 
-Different observation models (use [GLM.jl](https://github.com/JuliaStats/GLM.jl) instead).
+Lots of regression statistics (use [GLM.jl](https://github.com/JuliaStats/GLM.jl) instead).
+
+Different (non-Gaussian) observation models (use [GLM.jl](https://github.com/JuliaStats/GLM.jl) instead).
 
 Bayesian linear regression (use [BayesianLinearRegressors.jl](https://github.com/JuliaGaussianProcesses/BayesianLinearRegressors.jl) instead).
 
