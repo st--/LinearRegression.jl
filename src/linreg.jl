@@ -24,10 +24,10 @@ function (lr::LinearRegressor)(X::AbstractVector)
 end
 
 """
-    linreg(X, y; intercept=true)
+    linreg(X, y; intercept=true, method=SolveQR())
 
 Currently assumes that, if `X` is a Matrix, that `size(X) == (length(y),
-num_coefs)` (i.e., `KernelFunctions.RowVecs`).
+num_coefs)` (i.e., each row describes the features for one observation).
 """
 function linregress(X, y, weights=nothing; intercept=true, method=SolveQR())
     size(X, 1) == length(y) || throw(DimensionMismatch("size of X and y does not match"))
