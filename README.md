@@ -17,11 +17,17 @@ hasn't been maintained and doesn't work with Julia 1+.
 ## What this package does
 
 Linear regression based on vector and matrix inputs.
+
 Weighted linear regression.
+
 Allowing you to extract coefficients and predict.
 
 ## What this package does not do
 
 Handling of DataFrames (use [GLM.jl](https://github.com/JuliaStats/GLM.jl) instead).
+
 Different observation models (use [GLM.jl](https://github.com/JuliaStats/GLM.jl) instead).
+
 Bayesian linear regression (use [BayesianLinearRegressors.jl](https://github.com/JuliaGaussianProcesses/BayesianLinearRegressors.jl) instead).
+
+Online estimation (use [OnlineStats.jl](https://github.com/joshday/OnlineStats.jl) instead).
