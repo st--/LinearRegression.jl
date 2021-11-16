@@ -74,9 +74,9 @@ num_coefs)` (i.e., each row describes the features for one observation).
 function linregress(X, y, weights=nothing; intercept=true, method=SolveQR())
     size(X, 1) == length(y) || throw(DimensionMismatch("size of X and y does not match"))
     if intercept
-        X = add_bias_column(X)
+        X = _append_bias_column(method, X)
     else
-        X = convert(Matrix{LinearAlgebra.choltype(X)}, X)
+        X = _maybe_convert(method, X)
     end
     coeffs = if weights === nothing
         _lin_solve(method, X, y)
@@ -99,14 +99,16 @@ function _lin_solve(::SolveQR, X, y)
 end
 
 function _lin_solve(::SolveCholesky, X, y, W)
+    Wy = W * y
+    XtWy = lmul!(X', Wy)
+    WX = W * X
+    XtWX = lmul!(X', WX)
     # X' W X \ (X' W y)
-    # TODO improve in-place-ness
-    return ldiv!(cholesky!(Hermitian(X'*W*X)), X'*(W*y))
+    return ldiv!(cholesky!(Hermitian(XtWX)), XtWy)
 end
 
 function _lin_solve(::SolveCholesky, X, y)
     # X'X \ X'y
-    # TODO improve in-place-ness
     return ldiv!(cholesky!(Hermitian(X'X)), X'y)
 end
 
@@ -114,7 +116,15 @@ function _lin_solve(::SolveCholesky, X, y)
     return Hermitian(X'X) \ (X'*y)
 end
 
-function add_bias_column(X)
-    # TODO make type-stable for Float32
-    return [X ones(size(X, 1))]
+function _append_bias_column(::AbstractLinregSolver, X)
+    ones_column = ones(eltype(X), size(X, 1))
+    return [X ones_column]
 end
+
+function _append_bias_column(::SolveCholesky, X)
+    ones_column = ones(LinearAlgebra.choltype(X), size(X, 1))
+    return [X ones_column]
+end
+
+_maybe_convert(::AbstractLinregSolver, X) = X
+_maybe_convert(::SolveCholesky, X) = convert(Matrix{LinearAlgebra.choltype(X)}, X)
