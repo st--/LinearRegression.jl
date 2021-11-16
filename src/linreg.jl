@@ -87,6 +87,7 @@ function linregress(X, y, weights=nothing; intercept=true, method=SolveQR())
 end
 
 function _lin_solve(solver::AbstractLinregSolver, X, y, W)
+    # √W X \ √W y
     Wsqrt = sqrt(W)
     return _lin_solve(solver, Wsqrt * X, Wsqrt * y)
 end
@@ -96,13 +97,18 @@ function _lin_solve(::SolveQR, X, y)
 end
 
 function _lin_solve(::SolveCholesky, X, y, W)
+    # X' W X \ (X' W y)
+    # TODO improve in-place-ness
     return ldiv!(cholesky!(Hermitian(X'*W*X)), X'*(W*y))
 end
 
 function _lin_solve(::SolveCholesky, X, y)
+    # X'X \ X'y
+    # TODO improve in-place-ness
     return ldiv!(cholesky!(Hermitian(X'X)), X'y)
 end
 
 function add_bias_column(X)
+    # TODO make type-stable for Float32
     return [X ones(size(X, 1))]
 end
