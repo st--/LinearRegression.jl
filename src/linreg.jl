@@ -75,6 +75,8 @@ function linregress(X, y, weights=nothing; intercept=true, method=SolveQR())
     size(X, 1) == length(y) || throw(DimensionMismatch("size of X and y does not match"))
     if intercept
         X = add_bias_column(X)
+    else
+        X = convert(Matrix{LinearAlgebra.choltype(X)}, X)
     end
     coeffs = if weights === nothing
         _lin_solve(method, X, y)
