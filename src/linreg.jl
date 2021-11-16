@@ -99,12 +99,8 @@ function _lin_solve(::SolveQR, X, y)
 end
 
 function _lin_solve(::SolveCholesky, X, y, W)
-    Wy = W * y
-    XtWy = lmul!(X', Wy)
-    WX = W * X
-    XtWX = lmul!(X', WX)
     # X' W X \ (X' W y)
-    return ldiv!(cholesky!(Hermitian(XtWX)), XtWy)
+    return ldiv!(cholesky!(Hermitian(X' * W * X)), X' * (W * y))
 end
 
 function _lin_solve(::SolveCholesky, X, y)
