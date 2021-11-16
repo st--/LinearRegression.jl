@@ -6,8 +6,8 @@ using Test
         X = [4 6]'
         y = [-2, 4]
 
-        @testset "Solver $method" for method in (SolveQR(), SolveCholesky())
-            @testset "weights $weights" for weights in (nothing, ones(2))
+        @testset "weights $weights" for weights in (nothing, ones(2))
+            @testset "Solver $method" for method in (SolveQR(), SolveCholesky())
                 regressor = linregress(X, y, weights; intercept=true, method=method)
                 @test regressor([5]) ≈ 1
                 @test regressor([4 5 6]') ≈ [-2, 1, 4]
