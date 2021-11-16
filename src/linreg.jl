@@ -110,6 +110,10 @@ function _lin_solve(::SolveCholesky, X, y)
     return ldiv!(cholesky!(Hermitian(X'X)), X'y)
 end
 
+function _lin_solve(::SolveCholesky, X, y)
+    return Hermitian(X'X) \ (X'*y)
+end
+
 function add_bias_column(X)
     # TODO make type-stable for Float32
     return [X ones(size(X, 1))]
