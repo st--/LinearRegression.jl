@@ -6,7 +6,7 @@ using Test
         X = [4 6]'
         y = [-2, 4]
 
-        @testset "weights $weights" for weights in (nothing, ones(2))
+        @testset "weights $(repr(weights))" for weights in (nothing, ones(2))
             @testset "Solver $method" for method in (SolveQR(), SolveCholesky())
                 regressor = linregress(X, y, weights; intercept=true, method=method)
                 @test regressor([5]) ≈ 1
@@ -26,7 +26,7 @@ using Test
             beta = rand(size(X0, 2))
             y = X0 * beta
 
-            @testset "weights $weights" for weights in (nothing, ones(size(X, 1)))
+            @testset "weights $(repr(weights))" for weights in (nothing, ones(size(X, 1)))
                 @testset "Solver $method" for method in (SolveQR(), SolveCholesky())
                     regressor = linregress(X, y, weights; intercept=intercept, method=method)
                     @test coef(regressor) ≈ beta
