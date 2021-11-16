@@ -23,6 +23,15 @@ struct LinearRegressor{T<:Number}
     coeffs::Vector{T}
 end
 
+"""
+    coef(lr::LinearRegressor)
+
+Returns the linear regression coefficients of a [`linregress`](@ref) result. If
+`lr.intercept` is `true`, this includes the bias (intercept) in the last
+position.
+"""
+coef(lr::LinearRegressor) = lr.coeffs
+
 function (lr::LinearRegressor)(X::AbstractMatrix)
     res = X * lr.coeffs[1:size(X, 2)]
     if lr.intercept
@@ -70,23 +79,11 @@ function linregress(X, y, weights=nothing; intercept=true, method=SolveQR())
     coeffs = if weights === nothing
         _lin_solve(method, X, y)
     else
+        length(weights) == length(y) || throw(DimensionMismatch("size of y and weights does not match"))
         W = Diagonal(weights)
         _lin_solve(method, X, y, W)
     end
     return LinearRegressor(intercept, coeffs)
-end
-
-"""
-    coef(lr::LinearRegressor)
-
-Returns the linear regression coefficients of a [`linregress`](@ref) result. If
-`lr.intercept` is `true`, this includes the bias (intercept) in the last
-position.
-"""
-coef(lr::LinearRegressor) = lr.coeffs
-
-function _lin_solve(::SolveQR, X, y)
-    return X \ y
 end
 
 function _lin_solve(solver::AbstractLinregSolver, X, y, W)
@@ -94,12 +91,16 @@ function _lin_solve(solver::AbstractLinregSolver, X, y, W)
     return _lin_solve(solver, Wsqrt * X, Wsqrt * y)
 end
 
-function _lin_solve(::SolveCholesky, X, y)
-    return Hermitian(X'X) \ (X'*y)
+function _lin_solve(::SolveQR, X, y)
+    return X \ y
 end
 
 function _lin_solve(::SolveCholesky, X, y, W)
     return Hermitian(X'*W*X) \ X'*(W*y)
+end
+
+function _lin_solve(::SolveCholesky, X, y)
+    return Hermitian(X'X) \ (X'*y)
 end
 
 function add_bias_column(X)
