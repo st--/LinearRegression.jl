@@ -5,6 +5,7 @@ using Test
     @testset "scalar" begin
         X = [4 6]'
         y = [-2, 4]
+
         @testset "Solver $method" for method in (SolveQR(), SolveCholesky())
             regressor = linregress(X, y; intercept=true, method=method)
             @test regressor([5]) ≈ 1
@@ -22,6 +23,7 @@ using Test
             X0 = intercept ? [X ones(size(X, 1))] : X
             beta = rand(size(X0, 2))
             y = X0 * beta
+
             @testset "Solver $method" for method in (SolveQR(), SolveCholesky())
                 regressor = linregress(X, y; intercept=intercept, method=method)
                 @test coef(regressor) ≈ beta
