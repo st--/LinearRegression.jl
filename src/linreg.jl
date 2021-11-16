@@ -1,6 +1,21 @@
 abstract type AbstractLinregSolver end
 
+"""
+    SolveQR()
+
+Pass as `method` to [`linregress`](@ref) to use QR factorization to solve the
+linear regression system. Slower but more accurate for ill-conditioned systems
+than [`SolveCholesky`](@ref).
+"""
 struct SolveQR <: AbstractLinregSolver end
+
+"""
+    SolveCholesky()
+
+Pass as `method` to [`linregress`](@ref) to use Cholesky factorization to solve
+the linear regression system. Faster but less accurate for ill-conditioned
+systems than [`SolveQR`](@ref).
+"""
 struct SolveCholesky <: AbstractLinregSolver end
 
 struct LinearRegressor{T<:Number}
@@ -23,11 +38,28 @@ function (lr::LinearRegressor)(X::AbstractVector)
     return res
 end
 
-"""
-    linreg(X, y; intercept=true, method=SolveQR())
+@doc raw"""
+    linregress(X, y; intercept=true, method=SolveQR())
+    linregress(X, y, weights; intercept=true, method=SolveQR())
+
+Do (possibly weighted) linear regression to obtain coefficients β such that `ŷ
+= X * β` minimizes `‖ŷ - y‖²`. In the default case, this corresponds to solving
+`X \ y`.
+
+Returns a `LinearRegressor`, which can be passed to [`coef`](@ref) to extract
+the coefficients β or called with a vector or matrix `X` to predict at a single
+point or set of points.
 
 Currently assumes that, if `X` is a Matrix, that `size(X) == (length(y),
 num_coefs)` (i.e., each row describes the features for one observation).
+
+## Keyword Arguments:
+
+- If `intercept` is `true`, implicitly adds a column of ones to `X` to model a
+  bias term.
+
+- `method` determines how to solve the linear regression system (see
+  [`SolveQR`](@ref) and [`SolveCholesky`](@ref)).
 """
 function linregress(X, y, weights=nothing; intercept=true, method=SolveQR())
     size(X, 1) == length(y) || throw(DimensionMismatch("size of X and y does not match"))
@@ -43,6 +75,13 @@ function linregress(X, y, weights=nothing; intercept=true, method=SolveQR())
     return LinearRegressor(intercept, coeffs)
 end
 
+"""
+    coef(lr::LinearRegressor)
+
+Returns the linear regression coefficients of a [`linregress`](@ref) result. If
+`lr.intercept` is `true`, this includes the bias (intercept) in the last
+position.
+"""
 coef(lr::LinearRegressor) = lr.coeffs
 
 function _lin_solve(::SolveQR, X, y)
