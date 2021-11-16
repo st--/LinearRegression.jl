@@ -24,10 +24,11 @@ struct LinearRegressor{T<:Number}
 end
 
 function (lr::LinearRegressor)(X::AbstractMatrix)
+    res = X * lr.coeffs[1:size(X, 2)]
     if lr.intercept
-        X = add_bias_column(X)
+        res .+= lr.coeffs[end]
     end
-    return X * lr.coeffs
+    return res
 end
 
 function (lr::LinearRegressor)(X::AbstractVector)
