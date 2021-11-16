@@ -95,11 +95,11 @@ function _lin_solve(solver::AbstractLinregSolver, X, y, W)
 end
 
 function _lin_solve(::SolveCholesky, X, y)
-    return Hermitian(X'X) \ (X'*y)
+    return ldiv!(cholesky!(Hermitian(X'X)), X'y)
 end
 
 function _lin_solve(::SolveCholesky, X, y, W)
-    return Hermitian(X'*W*X) \ X'*(W*y)
+    return ldiv!(cholesky!(Hermitian(X'*W*X)), X'*(W*y))
 end
 
 function add_bias_column(X)
