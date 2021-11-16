@@ -70,6 +70,7 @@ function linregress(X, y, weights=nothing; intercept=true, method=SolveQR())
     coeffs = if weights === nothing
         _lin_solve(method, X, y)
     else
+        length(weights) == length(y) || throw(DimensionMismatch("size of y and weights does not match"))
         W = Diagonal(weights)
         _lin_solve(method, X, y, W)
     end
