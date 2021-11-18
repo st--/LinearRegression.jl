@@ -18,7 +18,7 @@ systems than [`SolveQR`](@ref).
 """
 struct SolveCholesky <: AbstractLinregSolver end
 
-struct LinearRegressor{T<:Union{Matrix{<:Number},Vector{<:Number}}}
+struct LinearRegressor{T<:Union{Matrix{<:Real},Vector{<:Real}}}
     intercept::Bool
     coeffs::T
 end
