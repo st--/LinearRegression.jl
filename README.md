@@ -15,7 +15,7 @@ and wishing I could just be `using LinearRegression`.
 [Alistair.jl](https://github.com/giob1994/Alistair.jl) would fit the bill, but
 hasn't been maintained and doesn't work with Julia 1+.
 
-## What this package does
+## What this package supports:
 
 Linear regression based on vector and matrix inputs.
 
@@ -23,7 +23,11 @@ Weighted linear regression.
 
 Allowing you to extract coefficients and predict.
 
-## What this package does not do
+*I'm happy to receive [issue reports](https://github.com/st--/LinearRegression.jl/issues/new/choose) and [pull requests](https://github.com/st--/LinearRegression.jl/compare), though I am likely to say no to proposals that would significantly increase the scope of this package (see below for other packages with more features).*
+
+## What this package does not do:
+
+Ridge regression (use [MultivariateStats.jl](https://github.com/JuliaStats/MultivariateStats.jl) instead, or convince me it really should be part of LinearRegression.jl as well).
 
 Handling of DataFrames (use [GLM.jl](https://github.com/JuliaStats/GLM.jl) instead).
 
@@ -31,6 +35,10 @@ Lots of regression statistics (use [GLM.jl](https://github.com/JuliaStats/GLM.jl
 
 Different (non-Gaussian) observation models (use [GLM.jl](https://github.com/JuliaStats/GLM.jl) instead).
 
+Sparse regression (use [SparseRegression.jl](https://github.com/joshday/SparseRegression.jl/) instead).
+
 Bayesian linear regression (use [BayesianLinearRegressors.jl](https://github.com/JuliaGaussianProcesses/BayesianLinearRegressors.jl) instead).
 
 Online estimation (use [OnlineStats.jl](https://github.com/joshday/OnlineStats.jl) instead).
+
+*Want to suggest another package to recommend here? Feel free to [open a pull request](https://github.com/st--/LinearRegression.jl/compare)! (:*
