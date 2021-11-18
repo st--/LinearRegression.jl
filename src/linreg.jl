@@ -107,11 +107,13 @@ function _lin_solve(::SolveCholesky, X, y)
 end
 
 function _append_bias_column(::AbstractLinregSolver, X)
+    # avoids any conversions at this point
     ones_column = ones(eltype(X), size(X, 1))
     return [X ones_column]
 end
 
 function _append_bias_column(::SolveCholesky, X)
+    # already promotes to the correct type
     ones_column = ones(LinearAlgebra.choltype(X), size(X, 1))
     return [X ones_column]
 end
