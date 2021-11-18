@@ -106,10 +106,6 @@ function _lin_solve(::SolveCholesky, X, y)
     return ldiv!(cholesky!(Hermitian(X'X)), X'y)
 end
 
-function _lin_solve(::SolveCholesky, X, y)
-    return Hermitian(X'X) \ (X'*y)
-end
-
 function _append_bias_column(::AbstractLinregSolver, X)
     ones_column = ones(eltype(X), size(X, 1))
     return [X ones_column]
