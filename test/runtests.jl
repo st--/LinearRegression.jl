@@ -36,4 +36,20 @@ using Test
             end
         end
     end
+
+    @testset "multioutput" begin
+        @testset "intercept $intercept" for intercept in (true, false)
+            X = rand(100, 13)
+            X0 = intercept ? [X ones(size(X, 1))] : X
+            beta = rand(size(X0, 2), 5)
+            y = X0 * beta
+
+            @testset "Solver $method" for method in (SolveQR(), SolveCholesky())
+                regressor = linregress(X, y; intercept=intercept, method=method)
+                @test coef(regressor) ≈ beta
+                @test regressor(X) ≈ y
+                @test vec(regressor(X[17, :])) ≈ y[17, :]
+            end
+        end
+    end
 end

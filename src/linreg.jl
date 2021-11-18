@@ -18,9 +18,9 @@ systems than [`SolveQR`](@ref).
 """
 struct SolveCholesky <: AbstractLinregSolver end
 
-struct LinearRegressor{T<:Number}
+struct LinearRegressor{T<:Union{Matrix{<:Real},Vector{<:Real}}}
     intercept::Bool
-    coeffs::Vector{T}
+    coeffs::T
 end
 
 """
@@ -32,20 +32,30 @@ position.
 """
 coef(lr::LinearRegressor) = lr.coeffs
 
+slope(lr::LinearRegressor) = lr.intercept ? _slope(lr.coeffs) : lr.coeffs
+bias(lr::LinearRegressor) = lr.intercept ? _bias(lr.coeffs) : _zero_bias(lr.coeffs)
+
+_slope(coef::AbstractMatrix) = @view coef[1:end-1, :]
+_slope(coef::AbstractVector) = @view coef[1:end-1]
+_bias(coef::AbstractMatrix) = @view coef[end:end, :]
+_bias(coef::AbstractVector) = coef[end]
+_zero_bias(coef::AbstractMatrix) = zero(eltype(lr.coeffs), 1, size(lr.coeffs, 2))
+_zero_bias(coef::AbstractVector) = zero(eltype(lr.coeffs))
+
 function (lr::LinearRegressor)(X::AbstractMatrix)
-    res = X * lr.coeffs[1:size(X, 2)]
     if lr.intercept
-        res .+= lr.coeffs[end]
+        return X * _slope(lr.coeffs) .+ _bias(lr.coeffs)
+    else
+        return X * lr.coeffs
     end
-    return res
 end
 
-function (lr::LinearRegressor)(X::AbstractVector)
-    res = dot(X, lr.coeffs[1:length(X)])
+function (lr::LinearRegressor)(x::AbstractVector)
     if lr.intercept
-        res += lr.coeffs[end]
+        res = x'_slope(lr.coeffs) + _bias(lr.coeffs)
+    else
+        res = x'lr.coeffs
     end
-    return res
 end
 
 @doc raw"""
@@ -72,7 +82,7 @@ num_coefs)` (i.e., each row describes the features for one observation).
   [`SolveQR`](@ref) and [`SolveCholesky`](@ref)).
 """
 function linregress(X, y, weights=nothing; intercept=true, method=SolveQR())
-    size(X, 1) == length(y) || throw(DimensionMismatch("size of X and y does not match"))
+    size(X, 1) == size(y, 1) || throw(DimensionMismatch("size of X and y does not match"))
     if intercept
         X = _append_bias_column(method, X)
     else
@@ -81,7 +91,7 @@ function linregress(X, y, weights=nothing; intercept=true, method=SolveQR())
     coeffs = if weights === nothing
         _lin_solve(method, X, y)
     else
-        length(weights) == length(y) || throw(DimensionMismatch("size of y and weights does not match"))
+        length(weights) == size(y, 1) || throw(DimensionMismatch("size of y and weights does not match"))
         W = Diagonal(weights)
         _lin_solve(method, X, y, W)
     end
