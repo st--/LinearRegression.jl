@@ -75,6 +75,8 @@ function linregress(X, y, weights=nothing; intercept=true, method=SolveQR())
     size(X, 1) == length(y) || throw(DimensionMismatch("size of X and y does not match"))
     if intercept
         X = _append_bias_column(method, X)
+    else
+        X = _maybe_convert(method, X)
     end
     coeffs = if weights === nothing
         _lin_solve(method, X, y)
@@ -117,3 +119,6 @@ function _append_bias_column(::SolveCholesky, X)
     ones_column = ones(LinearAlgebra.choltype(X), size(X, 1))
     return [X ones_column]
 end
+
+_maybe_convert(::AbstractLinregSolver, X) = X
+_maybe_convert(::SolveCholesky, X) = convert(Array{LinearAlgebra.choltype(X)}, X)
