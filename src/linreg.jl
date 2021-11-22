@@ -31,6 +31,7 @@ Returns the linear regression coefficients of a [`linregress`](@ref) result. If
 position.
 """
 coef(lr::LinearRegressor) = lr.coeffs
+islinear(lr::LinearRegressor) = true
 
 slope(lr::LinearRegressor) = lr.intercept ? _slope(lr.coeffs) : lr.coeffs
 bias(lr::LinearRegressor) = lr.intercept ? _bias(lr.coeffs) : _zero_bias(lr.coeffs)
