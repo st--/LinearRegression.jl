@@ -51,11 +51,19 @@ function (lr::LinearRegressor)(X::AbstractMatrix)
     end
 end
 
-function (lr::LinearRegressor)(x::AbstractVector)
+function (lr::LinearRegressor{<:Vector})(x::AbstractVector)
     if lr.intercept
-        res = x'_slope(lr.coeffs) + _bias(lr.coeffs)
+        return x'_slope(lr.coeffs) + _bias(lr.coeffs)
     else
-        res = x'lr.coeffs
+        return dot(x, lr.coeffs)
+    end
+end
+
+function (lr::LinearRegressor{<:Matrix})(x::AbstractVector)
+    if lr.intercept
+        return vec(x'_slope(lr.coeffs) + _bias(lr.coeffs))
+    else
+        return vec(x'lr.coeffs)
     end
 end
 

@@ -60,7 +60,7 @@ using Test
                 regressor = linregress(X, y; intercept=intercept, method=method)
                 @test coef(regressor) ≈ beta
                 @test regressor(X) ≈ y
-                @test vec(regressor(X[17, :])) ≈ y[17, :]
+                @test regressor(X[17, :]) ≈ y[17, :]
 
                 @testset "type-inference" begin
                     @inferred coef(regressor)
