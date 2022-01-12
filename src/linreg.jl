@@ -91,7 +91,7 @@ num_coefs)` (i.e., each row describes the features for one observation).
   [`SolveQR`](@ref) and [`SolveCholesky`](@ref)).
 """
 function linregress(X, y, weights=nothing; intercept=true, method=SolveQR())
-    size(X, 1) == size(y, 1) || throw(DimensionMismatch("size of X and y does not match"))
+    size(X, 1) == size(y, 1) || throw(DimensionMismatch("size of X and y does not match in first dimension"))
     if intercept
         X = _append_bias_column(method, X)
     else
@@ -100,7 +100,7 @@ function linregress(X, y, weights=nothing; intercept=true, method=SolveQR())
     coeffs = if weights === nothing
         _lin_solve(method, X, y)
     else
-        length(weights) == size(y, 1) || throw(DimensionMismatch("size of y and weights does not match"))
+        length(weights) == size(y, 1) || throw(DimensionMismatch("size of y and weights does not match in first dimension"))
         W = Diagonal(weights)
         _lin_solve(method, X, y, W)
     end
