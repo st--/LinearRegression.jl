@@ -9,7 +9,7 @@ function check_type_stability(regressor, X)
     end
 end
 
-function test_linreg_multivariate(X, y, beta; index=1)
+function test_linreg_multivariate(X, y, beta, X_element, y_element)
     intercept = size(X, 2) < size(beta, 1)
 
     @testset "weights $(repr(weights))" for weights in (nothing, ones(size(X, 1)))
@@ -17,7 +17,7 @@ function test_linreg_multivariate(X, y, beta; index=1)
             regressor = linregress(X, y, weights; intercept=intercept, method=method)
             @test coef(regressor) ≈ beta
             @test regressor(X) ≈ y
-            @test regressor(X[index, :]) ≈ y[index]
+            @test regressor(X_element) ≈ y_element
             check_type_stability(regressor, X)
         end
     end
@@ -51,14 +51,14 @@ end
                 beta = rand(size(X0, 2))
                 y = X0 * beta
 
-                test_linreg_multivariate(X, y, beta; index=17)
+                test_linreg_multivariate(X, y, beta, X[17, :], y[17])
             end
 
             @testset "multi-output" begin
                 beta = rand(size(X0, 2), 5)
                 y = X0 * beta
 
-                test_linreg_multivariate(X, y, beta; index=17)
+                test_linreg_multivariate(X, y, beta, X[17, :], y[17, :])
             end
         end
     end
