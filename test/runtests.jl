@@ -10,6 +10,8 @@ function check_type_stability(regressor, X)
 end
 
 function test_linreg_multivariate(X, y, beta; index=1)
+    intercept = size(X, 2) < size(beta, 1)
+
     @testset "weights $(repr(weights))" for weights in (nothing, ones(size(X, 1)))
         @testset "Solver $method" for method in (SolveQR(), SolveCholesky())
             regressor = linregress(X, y, weights; intercept=intercept, method=method)
