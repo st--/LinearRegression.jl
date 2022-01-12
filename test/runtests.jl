@@ -15,6 +15,12 @@ using Test
 
                 regressor = linregress(X, y, weights; intercept=false, method=method)
                 @test regressor([0]) == 0
+
+                @testset "type-inference" begin
+                    @inferred coef(regressor)
+                    @inferred regressor([4 5 6]')
+                    @inferred regressor([0])
+                end
             end
         end
     end
@@ -32,6 +38,12 @@ using Test
                     @test coef(regressor) ≈ beta
                     @test regressor(X) ≈ y
                     @test regressor(X[17, :]) ≈ y[17]
+
+                    @testset "type-inference" begin
+                        @inferred coef(regressor)
+                        @inferred regressor(X)
+                        @inferred regressor(X[17, :])
+                    end
                 end
             end
         end
@@ -48,7 +60,13 @@ using Test
                 regressor = linregress(X, y; intercept=intercept, method=method)
                 @test coef(regressor) ≈ beta
                 @test regressor(X) ≈ y
-                @test vec(regressor(X[17, :])) ≈ y[17, :]
+                @test regressor(X[17, :]) ≈ y[17, :]
+
+                @testset "type-inference" begin
+                    @inferred coef(regressor)
+                    @inferred regressor(X)
+                    @inferred regressor(X[17, :])
+                end
             end
         end
     end
