@@ -1,8 +1,30 @@
 using LinearRegression
 using Test
 
+function check_type_stability(regressor, X)
+    @testset "type-inference" begin
+        @inferred coef(regressor)
+        @inferred regressor(X)
+        @inferred regressor(X[1, :])
+    end
+end
+
+function test_linreg_multivariate(X, y, beta, X_element, y_element)
+    intercept = size(X, 2) < size(beta, 1)
+
+    @testset "weights $(repr(weights))" for weights in (nothing, ones(size(X, 1)))
+        @testset "Solver $method" for method in (SolveQR(), SolveCholesky())
+            regressor = linregress(X, y, weights; intercept=intercept, method=method)
+            @test coef(regressor) ≈ beta
+            @test regressor(X) ≈ y
+            @test regressor(X_element) ≈ y_element
+            check_type_stability(regressor, X)
+        end
+    end
+end
+
 @testset "LinearRegression.jl" begin
-    @testset "scalar" begin
+    @testset "univariate" begin
         X = [4 6]'
         y = [-2, 4]
 
@@ -15,40 +37,28 @@ using Test
 
                 regressor = linregress(X, y, weights; intercept=false, method=method)
                 @test regressor([0]) == 0
+                check_type_stability(regressor, [4 5 6]')
             end
         end
     end
 
-    @testset "matrix" begin
+    @testset "multivariate" begin
         @testset "intercept $intercept" for intercept in (true, false)
             X = rand(100, 13)
             X0 = intercept ? [X ones(size(X, 1))] : X
-            beta = rand(size(X0, 2))
-            y = X0 * beta
 
-            @testset "weights $(repr(weights))" for weights in (nothing, ones(size(X, 1)))
-                @testset "Solver $method" for method in (SolveQR(), SolveCholesky())
-                    regressor = linregress(X, y, weights; intercept=intercept, method=method)
-                    @test coef(regressor) ≈ beta
-                    @test regressor(X) ≈ y
-                    @test regressor(X[17, :]) ≈ y[17]
-                end
+            @testset "single-output" begin
+                beta = rand(size(X0, 2))
+                y = X0 * beta
+
+                test_linreg_multivariate(X, y, beta, X[17, :], y[17])
             end
-        end
-    end
 
-    @testset "multioutput" begin
-        @testset "intercept $intercept" for intercept in (true, false)
-            X = rand(100, 13)
-            X0 = intercept ? [X ones(size(X, 1))] : X
-            beta = rand(size(X0, 2), 5)
-            y = X0 * beta
+            @testset "multi-output" begin
+                beta = rand(size(X0, 2), 5)
+                y = X0 * beta
 
-            @testset "Solver $method" for method in (SolveQR(), SolveCholesky())
-                regressor = linregress(X, y; intercept=intercept, method=method)
-                @test coef(regressor) ≈ beta
-                @test regressor(X) ≈ y
-                @test vec(regressor(X[17, :])) ≈ y[17, :]
+                test_linreg_multivariate(X, y, beta, X[17, :], y[17, :])
             end
         end
     end

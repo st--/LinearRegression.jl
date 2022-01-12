@@ -51,11 +51,25 @@ function (lr::LinearRegressor)(X::AbstractMatrix)
     end
 end
 
-function (lr::LinearRegressor)(x::AbstractVector)
+function (lr::LinearRegressor{<:Vector})(x::AbstractVector)
     if lr.intercept
-        res = x'_slope(lr.coeffs) + _bias(lr.coeffs)
+        return x'_slope(lr.coeffs) + _bias(lr.coeffs)
     else
-        res = x'lr.coeffs
+        return dot(x, lr.coeffs)
+    end
+end
+
+if VERSION < v"1.5"
+    _vec(x) = collect(vec(x))
+else
+    _vec(x) = vec(x)
+end
+
+function (lr::LinearRegressor{<:Matrix})(x::AbstractVector)
+    if lr.intercept
+        return _vec(x'_slope(lr.coeffs) + _bias(lr.coeffs))
+    else
+        return _vec(x'lr.coeffs)
     end
 end
 
@@ -83,7 +97,7 @@ num_coefs)` (i.e., each row describes the features for one observation).
   [`SolveQR`](@ref) and [`SolveCholesky`](@ref)).
 """
 function linregress(X, y, weights=nothing; intercept=true, method=SolveQR())
-    size(X, 1) == size(y, 1) || throw(DimensionMismatch("size of X and y does not match"))
+    size(X, 1) == size(y, 1) || throw(DimensionMismatch("size of X and y does not match in first dimension"))
     if intercept
         X = _append_bias_column(method, X)
     else
@@ -92,7 +106,7 @@ function linregress(X, y, weights=nothing; intercept=true, method=SolveQR())
     coeffs = if weights === nothing
         _lin_solve(method, X, y)
     else
-        length(weights) == size(y, 1) || throw(DimensionMismatch("size of y and weights does not match"))
+        length(weights) == size(y, 1) || throw(DimensionMismatch("size of y and weights does not match in first dimension"))
         W = Diagonal(weights)
         _lin_solve(method, X, y, W)
     end
