@@ -59,21 +59,11 @@ function (lr::LinearRegressor{<:Vector})(x::AbstractVector)
     end
 end
 
-if VERSION < v"1.3"
-    function (lr::LinearRegressor{<:Matrix})(x::AbstractVector)
-        if lr.intercept
-            return collect(vec(x'_slope(lr.coeffs) + _bias(lr.coeffs)))
-        else
-            return collect(vec(x'lr.coeffs))
-        end
-    end
-else
-    function (lr::LinearRegressor{<:Matrix})(x::AbstractVector)
-        if lr.intercept
-            return vec(x'_slope(lr.coeffs) + _bias(lr.coeffs))
-        else
-            return vec(x'lr.coeffs)
-        end
+function (lr::LinearRegressor{<:Matrix})(x::AbstractVector)
+    if lr.intercept
+        return vec(x'_slope(lr.coeffs) + _bias(lr.coeffs))
+    else
+        return vec(x'lr.coeffs)
     end
 end
 
