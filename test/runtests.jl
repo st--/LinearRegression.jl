@@ -49,14 +49,14 @@ end
                 beta = rand(size(X0, 2))
                 y = X0 * beta
 
-                test_linreg(X, y, beta; index=17)
+                test_linreg_multivariate(X, y, beta; index=17)
             end
 
             @testset "multi-output" begin
                 beta = rand(size(X0, 2), 5)
                 y = X0 * beta
 
-                test_linreg(X, y, beta; index=17)
+                test_linreg_multivariate(X, y, beta; index=17)
             end
         end
     end
