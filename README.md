@@ -27,6 +27,8 @@ Allowing you to extract coefficients and predict.
 
 ## What this package does not do:
 
+Be as comprehensive as SciML's [LinearSolve.jl](https://github.com/SciML/LinearSolve.jl/) (on the other hand, less dependencies).
+
 Ridge regression (use [MultivariateStats.jl](https://github.com/JuliaStats/MultivariateStats.jl) instead, or convince me it really should be part of LinearRegression.jl as well).
 
 Handling of DataFrames (use [GLM.jl](https://github.com/JuliaStats/GLM.jl) instead).
