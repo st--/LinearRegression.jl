@@ -17,12 +17,13 @@ hasn't been maintained and doesn't work with Julia 1+.
 
 ## What this package supports:
 
-**Linear regression based on vector and matrix inputs:**
+**Linear regression based on vector and matrix inputs and outputs:**
 ```julia
 lr = linregress(X, y)
 ```
-`X` can be a vector (1D inputs, each element is one observation) or a matrix (multivariate inputs, each row is one observation, columns represent features).
-`y` can be a vector (1D outputs, each element is one observation) or a matrix (multivariate outputs, each row is one observation, columns represent targets).
+`X` can be a *vector* (1D inputs, each element is one observation) or a *matrix* (multivariate inputs, each row is one observation, columns represent features).
+
+`y` can be a *vector* (1D outputs, each element is one observation) or a *matrix* (multivariate outputs, each row is one observation, columns represent targets).
 
 **Weighted linear regression:**
 ```julia
@@ -31,11 +32,14 @@ lr = linregress(X, y, weights)
 `weights` is the vector of each observation's weight.
 
 **Intercept/bias term:**
-By default, implicitly adds a column of ones to account for the intercept term. You can disable this and force the linear regression to go through the origin by passing the `intercept=false` keyword argument.
+By default, implicitly adds a column of ones to account for the intercept term.
+
+You can disable this and force the linear regression to go through the origin by passing the `intercept=false` keyword argument.
 
 **Choice of solver:**
-By default, uses QR factorization to solve the linear system. You can change this by passing the `method` keyword argument; currently implemented are `method=SolveQR()` (the default) and `method=SolveCholesky()` (using Cholesky factorization; faster, but less accurate).
-
+By default, uses QR factorization (`X \ y`) to solve the linear system.
+You can explicitly choose a solver by passing the `method` keyword argument.
+Currently implemented choices are `method=SolveQR()` (using QR factorization, the default) and `method=SolveCholesky()` (using Cholesky factorization; can be faster, but numerically less accurate).
 
 **Predicting:**
 ```julia
@@ -44,7 +48,7 @@ ytest = lr(Xtest)
 
 **Extracting coefficients:**
 ```julia
-β̂ = coef(lr)
+β = coef(lr)
 ```
 which includes the intercept/bias in the last position, if `intercept=true` (the default).
 
