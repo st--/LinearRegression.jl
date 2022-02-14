@@ -18,7 +18,7 @@ hasn't been maintained and doesn't work with Julia 1+.
 ## What this package supports:
 
 **Linear regression based on vector and matrix inputs:**
-```
+```julia
 lr = linregress(X, y)
 ```
 `X` can be a vector (1D inputs, each element is one observation) or a matrix (multivariate inputs, each row is one observation, columns represent features).
