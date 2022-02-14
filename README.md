@@ -17,11 +17,42 @@ hasn't been maintained and doesn't work with Julia 1+.
 
 ## What this package supports:
 
-Linear regression based on vector and matrix inputs.
+**Linear regression based on vector and matrix inputs:**
+```
+lr = linregress(X, y)
+```
+`X` can be a vector (1D inputs, each element is one observation) or a matrix (multivariate inputs, each row is one observation, columns represent features).
+`y` can be a vector (1D outputs, each element is one observation) or a matrix (multivariate outputs, each row is one observation, columns represent targets).
 
-Weighted linear regression.
+**Weighted linear regression:**
+```julia
+lr = linregress(X, y, weights)
+```
+`weights` is the vector of each observation's weight.
 
-Allowing you to extract coefficients and predict.
+**Intercept/bias term:**
+By default, implicitly adds a column of ones to account for the intercept term. You can disable this and force the linear regression to go through the origin by passing the `intercept=false` keyword argument.
+
+**Choice of solver:**
+By default, uses QR factorization to solve the linear system. You can change this by passing the `method` keyword argument; currently implemented are `method=SolveQR()` (the default) and `method=SolveCholesky()` (using Cholesky factorization; faster, but less accurate).
+
+
+**Predicting:**
+```julia
+ytest = lr(Xtest)
+```
+
+**Extracting coefficients:**
+```julia
+β̂ = coef(lr)
+```
+which includes the intercept/bias in the last position, if `intercept=true` (the default).
+
+You can explicitly obtain slopes and intercept/bias by calling
+```julia
+LinearRegression.slope(lr)
+LinearRegression.bias(lr)
+```
 
 *I'm happy to receive [issue reports](https://github.com/st--/LinearRegression.jl/issues/new/choose) and [pull requests](https://github.com/st--/LinearRegression.jl/compare), though I am likely to say no to proposals that would significantly increase the scope of this package (see below for other packages with more features).*
 
