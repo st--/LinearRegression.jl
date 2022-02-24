@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/st--/LinearRegression.jl/actions/workflows/CI.yml/badge.svg?branch=)](https://github.com/st--/LinearRegression.jl/actions/workflows/CI.yml?query=branch%3A)
 
-This is a simple package. [See below](#what-this-package-does-not-do) for a list of more complex packages for linear regression in Julia.
+This is a simple package. [See below](#what-this-package-does-not-do-aka-alternatives) for a list of more complex packages for linear regression in Julia.
 
 ## Why this package?
 
